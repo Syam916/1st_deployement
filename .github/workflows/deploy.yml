@@ -110,24 +110,23 @@ jobs:
           docker pull ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
       # Step 6: Stop and remove any existing container
-      - name: Stop and Remove Existing Container
+      - name: Stop and remove existing container if running
         run: |
-          echo "Stopping and removing the existing container..."
-          docker ps -q --filter "name=first_deployment" | grep -q . && docker stop first_deployment && docker rm -fv first_deployment || echo "No container to stop."
-
-      # Step 7: Run Docker container with updated DB details
+          echo "Stopping and removing any existing container with the name 'first_deployment'..."
+          docker ps -aq --filter "name=first_deployment" | grep -q . && \
+          docker stop first_deployment && docker rm -fv first_deployment || \
+          echo "No existing container named 'first_deployment' found."
+      
       - name: Run Docker Image to serve users
         run: |
           echo "Running the Docker container with database environment variables..."
-          docker run -d -p 8080:8080 --ipc="host" --name=first_deployment \
-            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            -e AWS_REGION=${{ secrets.AWS_REGION }} \
+          docker run -d -p 8080:8080 --name=first_deployment \
             -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_USER=${{ secrets.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e DB_NAME=${{ secrets.DB_NAME }} \
             ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+    
 
       - name: Clean previous images and containers
         run: |
