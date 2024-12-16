@@ -1,4 +1,4 @@
-name: Python Deploy pipeline
+name: CI/CD_TEST
 
 on:
   push:
