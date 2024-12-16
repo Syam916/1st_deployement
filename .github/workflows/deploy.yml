@@ -110,12 +110,14 @@ jobs:
           docker pull ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
       # Step 6: Stop and remove any existing container
-      - name: Stop and remove existing container if running
+      - name: Free Port 8080 if Already in Use
         run: |
-          echo "Stopping and removing any existing container with the name 'first_deployment'..."
-          docker ps -aq --filter "name=first_deployment" | grep -q . && \
+          echo "Stopping processes using port 8080..."
+          sudo fuser -k 8080/tcp || echo "No process running on port 8080."
+          docker ps -q --filter "name=first_deployment" | grep -q . && \
           docker stop first_deployment && docker rm -fv first_deployment || \
-          echo "No existing container named 'first_deployment' found."
+          echo "No existing container to stop."
+
       
       - name: Run Docker Image to serve users
         run: |
