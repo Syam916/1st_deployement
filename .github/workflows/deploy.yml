@@ -1,4 +1,4 @@
-name: CI/CD_TEST
+name: Python_CI/CD_TEST
 
 on:
   push:
