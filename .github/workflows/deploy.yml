@@ -74,15 +74,12 @@ jobs:
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
   Continuous-Deployment:
-    name: Continuous Deployment
     needs: build-and-push-ecr-image
     runs-on: self-hosted
     steps:
-      # Step 1: Check out code
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      # Step 2: Configure AWS credentials for ECR access
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -90,47 +87,40 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 3: Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
-      # Step 4: Debug environment variables
+      
+      
       - name: Debug Environment Variables
         run: |
-          echo "### Debugging ECR Details ###"
+          echo "Debugging ECR details..."
           echo "AWS ECR LOGIN URI: ${{ secrets.AWS_ECR_LOGIN_URI }}"
           echo "ECR REPOSITORY NAME: ${{ secrets.ECR_REPOSITORY_NAME }}"
           echo "Full Image Path: ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest"
 
-      # Step 5: Pull the latest image from ECR
-      - name: Pull Latest Docker Image
+      - name: Pull latest images
         run: |
-          echo "Pulling the Docker image from Amazon ECR..."
+          echo "Pulling the Docker image..."
           docker pull ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
-      # Step 6: Stop and remove any existing container
-      - name: Free Port 8080 if Already in Use
+         
+      - name: Stop and remove  container if running
         run: |
-          echo "Stopping processes using port 8080..."
-          sudo fuser -k 8080/tcp || echo "No process running on port 8080."
-          docker ps -q --filter "name=first_deployment" | grep -q . && \
-          docker stop first_deployment && docker rm -fv first_deployment || \
-          echo "No existing container to stop."
-
-      
+          docker ps -q --filter "name=first_deployement" | grep -q . && docker stop first_deployement && docker rm -fv first_deployement
+       
       - name: Run Docker Image to serve users
         run: |
-          echo "Running the Docker container with database environment variables..."
-          docker run -d -p 8080:8080 --name=first_deployment \
-            -e DB_HOST=${{ secrets.DB_HOST }} \
-            -e DB_USER=${{ secrets.DB_USER }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e DB_NAME=${{ secrets.DB_NAME }} \
+          docker run -d -p 8080:8080 --ipc="host" --name=first_deployement \
+            -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' \
+            -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
+            -e 'AWS_REGION=${{ secrets.AWS_REGION }}' \
+            -e 'DB_HOST=${{ secrets.DB_HOST }}' \
+            -e 'DB_USER=${{ secrets.DB_USER }}' \
+            -e 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' \
+            -e 'DB_NAME=${{ secrets.DB_NAME }}' \
             ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-    
-
+        
       - name: Clean previous images and containers
         run: |
-          echo "Cleaning unused Docker images and containers..."
           docker system prune -f
