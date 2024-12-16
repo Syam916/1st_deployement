@@ -20,6 +20,8 @@ def test_register(client):
     cursor.close()
     connection.close()
 
+    print("delete successfull")
+
 
     # Register the user
     response = client.post('/register', data={'username': 'akhilesh', 'password': 'akhilesh123'})
