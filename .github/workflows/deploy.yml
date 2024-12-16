@@ -106,11 +106,10 @@ jobs:
           docker pull ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
       # Step 6: Stop and remove any existing container
-      - name: Stop and Remove Existing Container
+      - name: Stop and remove  container if running
         run: |
-          echo "Stopping and removing any existing container named 'first_deployment'..."
-          docker ps -q --filter "name=first_deployment" | grep -q . && \
-            docker stop first_deployment && docker rm -fv first_deployment || echo "No existing container found."
+          docker ps -q --filter "name=first_deployment" | grep -q . && docker stop first_deployment && docker rm -fv first_deployment
+       
       
       - name: Run Docker Container
         run: |
