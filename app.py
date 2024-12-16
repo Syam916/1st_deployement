@@ -86,8 +86,8 @@ def math_operations():
                 result = num1 - num2
             elif operation == 'multiply':
                 result = num1 * num2
-            elif operation == 'square':
-                result = f"Square of {num1}: {num1**2}, Square of {num2}: {num2**2}"
+            elif operation == 'cube':
+                result = f"Square of {num1}: {num1**3}, Square of {num2}: {num2**3}"
         except ValueError:
             result = "Invalid input, please enter valid numbers."
 
