@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Math Operations</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>Welcome, {{ username }}</h2>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Math Operations Container -->
+    <div class="container">
+        <h1>Math Operations</h1>
+        <form method="POST">
+            <input type="number" name="num1" placeholder="Enter first number" required>
+            <input type="number" name="num2" placeholder="Enter second number" required>
+            <div>
+                <button type="submit" name="operation" value="add">Add</button>
+                <button type="submit" name="operation" value="sub">Subtract</button>
+                <button type="submit" name="operation" value="multiply">Multiply</button>
+                <button type="submit" name="operation" value="square">Square</button>
+            </div>
+        </form>
+
+        {% if result is not none %}
+        <div class="result-div">
+            <strong>Result:</strong> {{ result }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
