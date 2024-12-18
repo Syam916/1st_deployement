@@ -46,6 +46,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     message = ''
+    print('enetered')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -76,6 +77,7 @@ def math_operations():
     result = None
     if request.method == 'POST':
         try:
+            username = session['username']
             num1 = float(request.form.get('num1', 0))
             num2 = float(request.form.get('num2', 0))
             operation = request.form.get('operation')
@@ -88,10 +90,25 @@ def math_operations():
                 result = num1 * num2
             elif operation == 'cube':
                 result = f"cube of {num1}: {num1**3}, cube of {num2}: {num2**3}"
+
+            # Insert data into the database
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            cursor.execute("""
+                INSERT INTO user_logs (user_name, number1, number2, result)
+                VALUES (%s, %s, %s, %s)
+            """, (username, num1, num2, result))
+            connection.commit()
+            cursor.close()
+            connection.close()
+
         except ValueError:
             result = "Invalid input, please enter valid numbers."
+        except mysql.connector.Error as err:
+            result = f"Error inserting into database: {err}"
 
     return render_template('math.html', result=result, username=session['username'])
+
 
 @app.route('/logout')
 def logout():

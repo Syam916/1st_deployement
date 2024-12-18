@@ -6,14 +6,26 @@
 </head>
 <body>
     <div class="container">
-        <h1>Register</h1>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Register</button>
-        </form>
-        <p>{{ message }}</p>
-        <a href="/login">Already have an account? Login</a>
+        <!-- Left Section -->
+        <div class="left-section">
+            <h1>Create an Account</h1>
+            <p>Sign up to get started.</p>
+            <form method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p class="login-link">Already have an account? <a href="/login">Login</a></p>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="circle one"></div>
+            <div class="circle two"></div>
+            <img src="/static/images/image.png" alt="Register Illustration">
+        </div>
     </div>
 </body>
 </html>
