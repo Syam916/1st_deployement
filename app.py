@@ -37,11 +37,12 @@ def register():
             connection.commit()
             cursor.close()
             connection.close()
-            message = "Registration successful"
+            message = "Registration successful"  # Success message
         except mysql.connector.Error as err:
             message = f"Error: {err}"
 
     return render_template('register.html', message=message)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
