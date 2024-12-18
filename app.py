@@ -89,8 +89,8 @@ def math_operations():
                 result = num1 - num2
             elif operation == 'multiply':
                 result = num1 * num2
-            elif operation == 'square':
-                result = f"square of {num1}: {num1**2}, cube of {num2}: {num2**2}"
+            elif operation == 'cube':
+                result = f"square of {num1}: {num1**3}, cube of {num2}: {num2**3}"
 
             # Insert data into the database
             connection = get_db_connection()
