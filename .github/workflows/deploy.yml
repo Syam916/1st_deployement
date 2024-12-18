@@ -107,7 +107,7 @@ jobs:
          
       - name: Stop and remove  container if running
         run: |
-          docker ps -q --filter "name=first_deployement" | grep -q . && docker stop first_deployement && docker rm -fv first_deployement || true
+          docker ps -q --filter "name=first_deployement" | grep -q . && docker stop first_deployement && docker rm -fv first_deployement
        
       - name: Run Docker Image to serve users
         run: |
