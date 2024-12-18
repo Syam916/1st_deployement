@@ -105,9 +105,14 @@ jobs:
           docker pull ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
          
-      - name: Stop and remove  container if running
+      - name: Stop and remove container if running
         run: |
-          docker ps -q --filter "name=first_deployement" | grep -q . && docker stop first_deployement && docker rm -fv first_deployement
+          if [ "$(docker ps -q --filter name=first_deployement)" ]; then
+            echo "Stopping and removing the running container..."
+            docker stop first_deployement && docker rm -fv first_deployement
+          else
+            echo "No container named 'first_deployement' is running."
+          fi
         
       - name: Run Docker Image to serve users
         run: |
